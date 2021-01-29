@@ -1,0 +1,15 @@
+analyzing CPU 3:
+  driver: intel_pstate
+  CPUs which run at the same hardware frequency: 3
+  CPUs which need to have their frequency coordinated by software: 3
+  maximum transition latency:  Cannot determine or is not supported.
+  hardware limits: 800 MHz - 5.00 GHz
+  available cpufreq governors: performance powersave
+  current policy: frequency should be within 800 MHz and 5.00 GHz.
+                  The governor "powersave" may decide which speed to use
+                  within this range.
+  current CPU frequency: Unable to call hardware
+  current CPU frequency: 800 MHz (asserted by call to kernel)
+  boost state support:
+    Supported: yes
+    Active: yes
