@@ -16,7 +16,7 @@
 //
 #define ALIGN 32
 
-//A cacheline is 64 bytes 
+//A cacheline is 64 bytes
 #define CACHELINE_SIZE 64
 
 //
@@ -38,17 +38,17 @@ double measure_time(void *restrict a,
   //
   double elapsed = 0.0;
   struct timespec after, before;
-  
+
   //
   do
     {
       //
       clock_gettime(CLOCK_MONOTONIC_RAW, &before);
-      
+
       //
       for (unsigned long long i = 0; i < r; i++)
 	memcpy(a, b, s);
-      
+
       //
       clock_gettime(CLOCK_MONOTONIC_RAW, &after);
 
@@ -70,20 +70,20 @@ double measure_cycles(void *restrict a,
   //
   double elapsed = 0.0;
   unsigned long long after = 0.0, before = 0.0;
-  
+
   //
   before = rdtsc();
-  
+
   //
   for (unsigned long long i = 0; i < r; i++)
     memcpy(a, b, s);
-  
+
   //
   after = rdtsc();
-  
+
   //
   elapsed = (double)(after - before) / (double)r;
-  
+
   //
   return elapsed;
 }
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
   //Number of kernel runs
   if (argc < 3)
     return printf("Usage: %s [s] [r]\n", argv[0]), 1;
-  
+
   //
   unsigned long long s = atoll(argv[1]);
   unsigned long long r = atoll(argv[2]);
@@ -115,36 +115,36 @@ int main(int argc, char **argv)
   //
   double times[MAX_SAMPLES];
   double cycles[MAX_SAMPLES];
-  
+
   //
   void *restrict a = aligned_alloc(ALIGN, n * sizeof(double));
   void *restrict b = aligned_alloc(ALIGN, n * sizeof(double));
 
   //
-  fprintf(stderr, "pc; %.4lf KiB, %.4lf MiB, %.4lf GiB; %llu 64-bit elements/iterations\n",
-	  s_kib,
-	  s_mib,
-	  s_gib,
-	  n);
-  
+  // fprintf(stderr, "pc; %.4lf KiB, %.4lf MiB, %.4lf GiB; %llu 64-bit elements/iterations\n",
+	//   s_kib,
+	//   s_mib,
+	//   s_gib,
+	//   n);
+
   //
   init(a, 0.0, n);
   init(b, 1.0, n);
-  
+
   //Run time
   for (unsigned i = 0; i < MAX_SAMPLES; i++)
     times[i] = measure_time(a, b, s, r);
-  
+
   //
   printf("(s, ns, GiB/s):\n");
-  
+
   for (unsigned i = 0; i < MAX_SAMPLES; i++)
     printf("%3u, %20.3lf, %20.3lf, %10.3lf\n",
 	   i,
 	   times[i] / 1e9,    //Convert ns to s
 	   times[i],
 	   s_gib / (times[i] / 1e9));
-  
+
   print_stats(times, MAX_SAMPLES);
 
   //
@@ -154,10 +154,10 @@ int main(int argc, char **argv)
   //Run cycles
   for (unsigned i = 0; i < MAX_SAMPLES; i++)
     cycles[i] = measure_cycles(a, b, s, r);
-  
+
   //
   printf("\n\n(cycles, CPIt, CPI):\n");
-  
+
   for (unsigned i = 0; i < MAX_SAMPLES; i++)
     printf("%3u, %20.3lf, %20.3lf, %20.3lf\n",
 	   i,
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 	   cycles[i] / (n * 5));
 
   print_stats(cycles, MAX_SAMPLES);
-  
+
   //
   free(a);
   free(b);
